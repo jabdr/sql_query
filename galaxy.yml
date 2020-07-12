@@ -9,7 +9,7 @@ namespace: jabdr
 name: sql_query
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 1.0.0
+version: 1.0.1
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
@@ -42,9 +42,7 @@ tags: ['sql', 'query', 'mysql', 'postgresql', 'mssql', 'sqlalchemy', 'table', 'r
 # collection label 'namespace.name'. The value is a version range
 # L(specifiers,https://python-semanticversion.readthedocs.io/en/latest/#requirement-specification). Multiple version
 # range specifiers can be set and are separated by ','
-dependencies: {
-  'sqlalchemy>=1.2'
-}
+dependencies:
 
 # The URL of the originating SCM repository
 repository: https://github.com/jabdr/sql_query.git

@@ -3,11 +3,14 @@
 DOCUMENTATION = '''
 module: sql_query
 short_description: Select/Insert/Update/Delete records in an sql database
+description: >
+               This module uses sqlalchemy to query different types of sql databases
+               with the given table structure, keys and values.
 requirements:
   - python-sqlalchemy
 options:
   name:
-    description: Database connection URL: https://docs.sqlalchemy.org/en/13/core/engines.html#database-urls
+    description: "Database connection URL: https://docs.sqlalchemy.org/en/13/core/engines.html#database-urls"
     required: true
     aliases:
       - url
@@ -163,6 +166,19 @@ EXAMPLES = '''
     - name: col2
       type: Integer
     state: select
+'''
+
+RETURN = r'''
+rows:
+  description: A list of rows that have been set, deleted or selected.
+  returned: always
+  type: list
+  sample: "[{'col1': 'val1', 'col2': 2}]"
+changed:
+  description: If an INSERT,UPDATE or DELETE query was executed (or check mode).
+  returned: always
+  type: bool
+  sample: "True"
 '''
 
 from ansible.module_utils.basic import AnsibleModule
