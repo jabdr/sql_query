@@ -1,0 +1,61 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: no
+
+  collections:
+  - jabdr.sql_query
+
+  tasks:
+  - name: "ensure values"
+    sql_query:
+      name: "sqlite:///test.db"
+      table: test
+      keys:
+      - col1
+      columns:
+      - name: col1
+        type: String
+        value: blubb
+      - name: col2
+        type: Integer
+        value: 2
+      - name: col3
+        type: DateTime
+        value: "2020-05-12 12:05:12"
+      # Date is currently broken in ansible
+      #- name: col4
+      #  type: Date
+      #  value: "2020-05-12"
+      - name: col5
+        type: BigInteger
+        value: 9223372036854775807
+      - name: col6
+        type: Text
+        value: "some long text in theory"
+      - name: col7
+        type: Boolean
+        value: yes
+    register: testout
+
+  - name: "select col1, col2 from test where col1 = 'blubb'"
+    sql_query:
+      name: "sqlite:///test.db"
+      table: test
+      columns:
+      - name: col1
+        type: String
+      - name: col2
+        type: Integer
+      - name: col3
+        type: DateTime
+      #- name: col4
+      #  type: Date
+      - name: col5
+        type: BigInteger
+      - name: col6
+        type: Text
+      - name: col7
+        type: Boolean
+      state: select
+    register: testout

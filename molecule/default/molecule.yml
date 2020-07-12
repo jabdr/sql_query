@@ -1,0 +1,17 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: centos:8
+    pre_build_image: true
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_LIBRARY: "../../plugins/modules/"
+verifier:
+  name: ansible
+  env:
+    ANSIBLE_LIBRARY: "../../plugins/modules/"
