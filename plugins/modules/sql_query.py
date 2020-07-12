@@ -1,5 +1,15 @@
 # -*- coding: utf-8 -*-
 
+from ansible.module_utils.basic import AnsibleModule
+
+
+import datetime
+try:
+    import sqlalchemy
+    HAS_SQLALCHEMY = True
+except ImportError:
+    HAS_SQLALCHEMY = False
+
 DOCUMENTATION = '''
 module: sql_query
 short_description: Select/Insert/Update/Delete records in an sql database
@@ -181,16 +191,6 @@ changed:
   sample: "True"
 '''
 
-from ansible.module_utils.basic import AnsibleModule
-
-
-import datetime
-try:
-    import sqlalchemy
-    HAS_SQLALCHEMY = True
-except ImportError:
-    HAS_SQLALCHEMY = False
-
 
 def to_datetime(x, date=False):
     if not isinstance(x, datetime.datetime) and not isinstance(x, datetime.date):
@@ -237,6 +237,7 @@ TYPE_FOR_NAME = {
     },
 }
 
+
 class SQLQuery(object):
 
     def __init__(self, module):
@@ -246,8 +247,7 @@ class SQLQuery(object):
         rows_after = self.select_rows()
         rows_after_len = len(rows_after)
         if self.module.params.get('state') == 'select' or self.module.params.get('state') == 'count':
-            self.module.exit_json(changed=False,
-                           rows=self.format_rows(rows_after))
+            self.module.exit_json(changed=False, rows=self.format_rows(rows_after))
         elif self.module.params.get('state') == 'absent':
             if rows_after_len < 1:
                 changed = False
@@ -261,8 +261,7 @@ class SQLQuery(object):
             if not self.module.check_mode:
                 self.insert_row()
             rows_after = self.select_rows()
-            self.module.exit_json(changed=changed,
-                           rows=self.format_rows(rows_after))
+            self.module.exit_json(changed=changed, rows=self.format_rows(rows_after))
         else:
             if rows_after_len < 1:
                 changed = True
@@ -276,8 +275,7 @@ class SQLQuery(object):
                 else:
                     self.update_rows()
                 rows_after = self.select_rows()
-            self.module.exit_json(changed=changed,
-                           rows=self.format_rows(rows_after))
+            self.module.exit_json(changed=changed, rows=self.format_rows(rows_after))
 
     def format_rows(self, rows):
         frows = []
@@ -331,7 +329,8 @@ class SQLQuery(object):
         stmt.execute()
 
     def init_sqlalchemy(self):
-        self.engine = sqlalchemy.create_engine(name_or_url=self.module.params.get('name'),
+        self.engine = sqlalchemy.create_engine(
+            name_or_url=self.module.params.get('name'),
             isolation_level='READ UNCOMMITTED')
         self.metadata = sqlalchemy.MetaData()
         self.metadata.bind = self.engine
@@ -425,7 +424,7 @@ def main():
             keys=dict(required=False, aliases=['pk'], type='list', default=[]),
             columns=dict(required=True, type='list'),
             state=dict(default='present',
-                        choices=['present', 'absent', 'select', 'insert', 'count']),
+                       choices=['present', 'absent', 'select', 'insert', 'count']),
             distinct=dict(default=False, type='bool'),
             filter=dict(required=False, default={}, type='dict')
         ),
@@ -434,6 +433,7 @@ def main():
         module.fail_json(msg='python-sqlalchemy not found')
 
     SQLQuery(module)
+
 
 if __name__ == '__main__':
     main()
