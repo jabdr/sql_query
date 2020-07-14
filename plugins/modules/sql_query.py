@@ -243,6 +243,8 @@ class SQLQuery(object):
     def __init__(self, module):
         self.module = module
         self.init_sqlalchemy()
+        if not self.table_exists(self.module.params.get('table')):
+            self.module.fail_json(msg='table does not exist')
         self.create_table()
         rows_after = self.select_rows()
         rows_after_len = len(rows_after)
@@ -414,6 +416,10 @@ class SQLQuery(object):
                     except (AttributeError, KeyError):
                         raise ValueError('Unknown operator on column {}'.format(key))
                     args.append(action(column_value))
+
+    def table_exists(self, name):
+        ret = self.engine.dialect.has_table(self.engine, name)
+        return ret
 
 
 def main():
